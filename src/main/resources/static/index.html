@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital School Catalog - Teacher Interface</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f0f2f5; color: #333; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        h1 { color: #1a73e8; text-align: center; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #666; font-style: italic; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #555; }
+        select, input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 14px; transition: border-color 0.2s; }
+        select:focus, input:focus { outline: none; border-color: #1a73e8; }
+        button { width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background-color 0.2s; }
+        button:hover { background-color: #218838; }
+        .message { margin-top: 20px; padding: 12px; border-radius: 6px; display: none; text-align: center; font-weight: 500; }
+        .success { background-color: #d4edda; color: #155724; display: block; }
+        .error { background-color: #f8d7da; color: #721c24; display: block; }
+        .grades-section { margin-top: 40px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background-color: #fff; }
+        th, td { border: 1px solid #eee; padding: 12px; text-align: left; }
+        th { background-color: #f8f9fa; color: #555; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+        tr:hover { background-color: #f1f3f4; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Digital School Catalog</h1>
+    <p class="subtitle">--- Teacher Administration Interface ---</p>
+
+    <div class="form-group">
+        <label for="studentSelect">Select Student:</label>
+        <select id="studentSelect">
+            <option value="">Loading students...</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="subjectSelect">Select Subject:</label>
+        <select id="subjectSelect">
+            <option value="">Loading subjects...</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="gradeValue">Grade (1-10):</label>
+        <input type="number" id="gradeValue" min="1" max="10" value="10">
+    </div>
+
+    <button onclick="addGrade()">Submit Grade</button>
+
+    <div id="msg" class="message"></div>
+
+    <div class="grades-section">
+        <h3>Academic Record for Selected Student:</h3>
+        <table id="gradesTable">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Grade</th>
+                    <th>Date Assigned</th>
+                </tr>
+            </thead>
+            <tbody id="gradesBody">
+                <tr><td colspan="3" style="text-align:center">Select a student to view their grades.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Initialize data on page load
+    window.onload = function() {
+        loadStudents();
+        loadSubjects();
+    };
+
+    function loadStudents() {
+        fetch('/api/students')
+            .then(res => res.json())
+            .then(data => {
+                const select = document.getElementById('studentSelect');
+                select.innerHTML = '';
+                if (data.length === 0) {
+                    select.innerHTML = '<option value="">No students found</option>';
+                    return;
+                }
+                data.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s.id;
+                    option.textContent = `${s.firstName} ${s.lastName}`;
+                    select.appendChild(option);
+                });
+                
+                // Update grades when student selection changes
+                select.onchange = () => loadGrades(select.value);
+                
+                // Load grades for the first student by default
+                if(data.length > 0) loadGrades(data[0].id);
+            })
+            .catch(err => console.error("Error loading students:", err));
+    }
+
+    function loadSubjects() {
+        // We use the same subjects as defined in DataLoader.java
+        const select = document.getElementById('subjectSelect');
+        select.innerHTML = '';
+        
+        const subjects = [
+            {id: 1, name: "Mathematics"},
+            {id: 2, name: "Computer Science"},
+            {id: 3, name: "English Literature"}
+        ];
+        
+        subjects.forEach(sub => {
+            const option = document.createElement('option');
+            option.value = sub.id;
+            option.textContent = sub.name;
+            select.appendChild(option);
+        });
+    }
+
+    function addGrade() {
+        const studentId = document.getElementById('studentSelect').value;
+        const subjectId = document.getElementById('subjectSelect').value;
+        const value = document.getElementById('gradeValue').value;
+        const msg = document.getElementById('msg');
+
+        if (!studentId || !subjectId) {
+            msg.innerText = "Please select both a student and a subject.";
+            msg.className = "message error";
+            return;
+        }
+
+        fetch(`/api/grades?studentId=${studentId}&subjectId=${subjectId}&value=${value}`, {
+            method: 'POST'
+        })
+        .then(res => {
+            if(res.ok) {
+                msg.innerText = "Grade successfully submitted!";
+                msg.className = "message success";
+                loadGrades(studentId);
+                // Hide success message after 3 seconds
+                setTimeout(() => { msg.style.display = 'none'; }, 3000);
+            } else {
+                msg.innerText = "Error: Could not save the grade.";
+                msg.className = "message error";
+            }
+        })
+        .catch(err => {
+            msg.innerText = "Network error occurred.";
+            msg.className = "message error";
+        });
+    }
+
+    function loadGrades(studentId) {
+        if (!studentId) return;
+        
+        fetch(`/api/students/${studentId}/grades`)
+            .then(res => res.json())
+            .then(data => {
+                const body = document.getElementById('gradesBody');
+                body.innerHTML = '';
+                
+                if (data.length === 0) {
+                    body.innerHTML = '<tr><td colspan="3" style="text-align:center">No grades recorded for this student.</td></tr>';
+                    return;
+                }
+
+                data.forEach(g => {
+                    const date = new Date(g.date).toLocaleDateString(undefined, {
+                        year: 'numeric', month: 'short', day: 'numeric',
+                        hour: '2-digit', minute: '2-digit'
+                    });
+                    body.innerHTML += `<tr><td>${g.subject.name}</td><td><strong>${g.value}</strong></td><td>${date}</td></tr>`;
+                });
+            })
+            .catch(err => {
+                console.error("Error loading grades:", err);
+                document.getElementById('gradesBody').innerHTML = '<tr><td colspan="3" style="text-align:center; color:red">Error loading academic records.</td></tr>';
+            });
+    }
+</script>
+
+</body>
+</html>
