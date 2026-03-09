@@ -1,65 +1,71 @@
-# Digital School Catalog (Catalog Digital)
+# Random Password Generator
 
-A modern, Spring Boot-powered management system for educational institutions. This application provides a robust backend for managing students, academic subjects, and student performance through a centralized digital gradebook.
+A professional Java-based CLI application that generates secure, randomized passwords based on user-defined length. This project serves as a demonstration of clean code practices, effective use of the Java Standard Library, and Maven project structure.
 
-## 🚀 Overview
+## 🚀 Key Features
 
-This project serves as a comprehensive "Digital Catalog" where teachers can:
-- **Manage Students:** Keep track of student records (first name, last name, and unique school email).
-- **Subject Administration:** Define academic subjects (e.g., Mathematics, Computer Science).
-- **Grade Management:** Assign grades (1-10) to students for specific subjects with automatic timestamping.
-- **Academic Monitoring:** View a full history of a student's grades across different subjects.
+- **Dynamic Length:** Generates passwords of any length specified by the user.
+- **Enhanced Security:** Combines uppercase, lowercase, numbers, and special symbols for maximum entropy.
+- **Input Validation:** Handles user interaction through the `Scanner` API.
+- **Optimized Performance:** Uses `StringBuilder` for efficient string manipulation.
 
 ## 🛠️ Technical Stack
 
-- **Java 21:** Utilizing the latest language features and performance improvements.
-- **Spring Boot 3.2.2:** For rapid development and production-ready application context.
-- **Spring Data JPA:** For seamless Object-Relational Mapping (ORM) and database interaction.
-- **H2 Database:** An in-memory database used for development and testing (zero configuration required).
-- **Lombok:** To reduce boilerplate code (Getters, Setters, Constructors).
-- **VAnilla HTML5/CSS3/JS:** A clean, responsive teacher interface for real-time interaction.
+- **Language:** Java 21 (LTS)
+- **Build System:** Maven
+- **Execution:** Terminal/Command Line
 
-## 📂 Project Structure
+## ⚙️ Requirements
 
-- `org.example.model`: JPA entities defining the database schema.
-- `org.example.repository`: Data access layer using Spring Data JPA repositories.
-- `org.example.service`: Business logic layer handling data processing and validation.
-- `org.example.controller`: REST API endpoints for frontend-backend communication.
-- `org.example.config`: Configuration classes (e.g., `DataLoader` for seeding the database).
+- **Java Development Kit (JDK) 21** or later.
+- **Maven 3.9+** (optional for building from source).
 
-## 🚦 Getting Started
+## 🚀 Installation & Usage
 
-### Prerequisites
-- JDK 21 or higher
-- Maven 3.8+
-
-### Installation & Execution
-1. Clone the repository or extract the archive.
-2. Navigate to the project root directory.
-3. Run the application using Maven:
-   ```bash
-   mvn spring-boot:run
-   ```
-4. Access the teacher interface:
-   - **Frontend:** [http://localhost:8080](http://localhost:8080)
-   - **H2 Console:** [http://localhost:8080/h2-console](http://localhost:8080/h2-console) (JDBC URL: `jdbc:h2:mem:catalogdb`, User: `sa`, Password: `[empty]`)
-
-## 🔗 API Documentation (REST Endpoints)
-
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| **GET** | `/api/students` | Retrieve a list of all students. |
-| **POST** | `/api/students` | Register a new student (JSON body). |
-| **GET** | `/api/students/{id}/grades` | Get all grades for a specific student. |
-| **POST** | `/api/grades` | Assign a grade (Params: `studentId`, `subjectId`, `value`). |
-| **POST** | `/api/subjects` | Add a new subject (Param: `name`). |
-
-## 🧪 Testing
-
-The project includes unit tests for core business logic. You can execute them using:
+### 1. Clone the Project
 ```bash
-mvn test
+git clone https://github.com/your-username/RandomPasswordGenerator.git
+cd RandomPasswordGenerator
 ```
 
+### 2. Build with Maven
+If you have Maven installed, you can package the project into an executable JAR:
+```bash
+mvn clean package
+```
+
+### 3. Run the Application
+Navigate to the `target` folder and run the generated JAR:
+```bash
+java -cp target/GeneratorParole-1.0-SNAPSHOT.jar org.example.Main
+```
+
+Alternatively, you can run it directly using the Java compiler if Maven is not available:
+```bash
+javac -d bin src/main/java/org/example/Main.java
+java -cp bin org.example.Main
+```
+
+## 📂 Project Architecture
+
+```text
+RandomPasswordGenerator/
+├── src/
+│   └── main/
+│       └── java/
+│           └── org/
+│               └── example/
+│                   └── Main.java     # Application entry point & logic
+├── .gitignore                        # Standard exclusions
+├── pom.xml                           # Maven project configuration
+└── README.md                         # Documentation
+```
+
+## 📈 Future Enhancements
+
+- **Secure Selection:** Implementing `java.security.SecureRandom` for cryptographic strength.
+- **Command Line Arguments:** Support for passing parameters directly via CLI flags.
+- **Multi-language Support:** Localizing the console output.
+
 ---
-*Developed as part of the University Portfolio.*
+*Developed as a portfolio project to demonstrate core Java competencies.*

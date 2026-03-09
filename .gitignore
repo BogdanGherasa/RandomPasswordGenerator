@@ -3,49 +3,26 @@ target/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
-pom.xml.restore
+pom.xml.next
 release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
+# If you prefer the maven wrapper
+!.mvn/wrapper/maven-wrapper.jar
 
-# IntelliJ IDEA
+# IDEs
 .idea/
-*.iws
 *.iml
-*.ipr
-out/
-
-# Eclipse
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-# NetBeans
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-
-# VS Code
 .vscode/
-
-# OS Files
-.DS_Store
-Thumbs.db
-desktop.ini
+.settings/
+.project
+.classpath
+.nb-configuration.xml
 
 # Logs
 *.log
-logs/
 
-# Database files
-*.db
-*.h2.db
+# OS
+.DS_Store
+Thumbs.db
